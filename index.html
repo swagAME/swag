@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Game</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .game-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007aff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #0066cc;
+        }
+        #score {
+            font-size: 24px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🎯 Кликер-игра</h1>
+        <p>Кликайте на кнопку, чтобы зарабатывать очки!</p>
+        
+        <div id="score">Очки: 0</div>
+        <button id="click-btn">Кликнуть!</button>
+        <button id="submit-btn">Отправить результат</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        
+        let score = 0;
+        const clickBtn = document.getElementById('click-btn');
+        const submitBtn = document.getElementById('submit-btn');
+        const scoreDisplay = document.getElementById('score');
+        
+        // Игровая логика
+        clickBtn.addEventListener('click', () => {
+            score += 1;
+            scoreDisplay.textContent = `Очки: ${score}`;
+        });
+        
+        // Отправка результата
+        submitBtn.addEventListener('click', () => {
+            if (score > 0) {
+                const data = {
+                    score: score,
+                    game: "clicker"
+                };
+                tg.sendData(JSON.stringify(data));
+                tg.close();
+            } else {
+                alert("Наберите хотя бы 1 очко!");
+            }
+        });
+    </script>
+</body>
+</html>
