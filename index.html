@@ -35,86 +35,58 @@
         button:hover {
             background: #0066cc;
         }
-        button:disabled {
-            background: #cccccc;
-            cursor: not-allowed;
-        }
         #score {
             font-size: 24px;
             margin: 20px 0;
             font-weight: bold;
-        }
-        #timer {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="game-container">
         <h1>🎯 Кликер-игра</h1>
-        <p>Кликайте на кнопку, чтобы зарабатывать очки! У вас есть 30 секунд.</p>
-        
-        <div id="timer">Осталось времени: 30 сек</div>
+        <p>Кликайте на кнопку, чтобы зарабатывать очки!</p>
+
         <div id="score">Очки: 0</div>
         <button id="click-btn">Кликнуть!</button>
-        <button id="submit-btn" disabled>Отправить результат</button>
+        <button id="submit-btn">Отправить результат</button>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        
+
         let score = 0;
-        let timeLeft = 30;
-        let gameActive = true;
         const clickBtn = document.getElementById('click-btn');
         const submitBtn = document.getElementById('submit-btn');
         const scoreDisplay = document.getElementById('score');
-        const timerDisplay = document.getElementById('timer');
-        
-        // Таймер игры
-        const gameTimer = setInterval(() => {
-            timeLeft--;
-            timerDisplay.textContent = `Осталось времени: ${timeLeft} сек`;
-            
-            if (timeLeft <= 0) {
-                clearInterval(gameTimer);
-                gameActive = false;
-                clickBtn.disabled = true;
-                submitBtn.disabled = false;
-                timerDisplay.textContent = "Время вышло!";
-            }
-        }, 1000);
-        
+
         // Игровая логика
         clickBtn.addEventListener('click', () => {
-            if (gameActive) {
-                score += 1;
-                scoreDisplay.textContent = `Очки: ${score}`;
-            }
+            score += 1;
+            scoreDisplay.textContent = `Очки: ${score}`;
         });
-        
+
         // Отправка результата
         submitBtn.addEventListener('click', () => {
             if (score > 0) {
                 const data = {
                     score: score,
-                    game: "clicker",
-                    time: (30 - timeLeft)
+                    game: "clicker"
                 };
-                
+
                 console.log("Отправка данных в бота:", data);
                 tg.sendData(JSON.stringify(data));
-                
+
                 // Показываем анимацию отправки
                 submitBtn.textContent = "Отправлено!";
                 submitBtn.style.background = "#4CAF50";
                 setTimeout(() => tg.close(), 1000);
+            } else {
+                alert("Наберите хотя бы 1 очко!");
             }
         });
-        
+
         // Инициализация WebApp
         tg.ready();
     </script>
